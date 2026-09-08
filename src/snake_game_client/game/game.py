@@ -17,6 +17,12 @@ class Game:
 
       self.screen.fill("purple")
 
+      image = pygame.image.load("assets/Snake_Game_Splash_Screen.png").convert_alpha()
+      image = pygame.transform.scale(image, (self.screen.get_width(), self.screen.get_height()))
+
+      self.screen.blit(image, (0, 0))
+
+
       pygame.display.flip()
 
       self.clock.tick(60)
