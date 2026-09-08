@@ -1,5 +1,10 @@
 from snake_game_client.game.game import Game
 
-game = Game()
 
-game.run()
+def main() -> None:
+    game = Game()
+    game.run()
+
+
+if __name__ == "__main__":
+    main()
