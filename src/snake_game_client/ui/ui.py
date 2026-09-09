@@ -6,9 +6,9 @@ def test():
    print("Test")
 
 class Ui:
-  def __init__(self, screen):
-      #self.main_menu = MainMenu(screen)
+  def __init__(self, screen, network):
       self.screen = screen
+      self.network = network
       self.current_screen = MainMenu(self.screen, self.change_screen)
 
   def change_screen(self, screen, data = None):
@@ -16,7 +16,7 @@ class Ui:
         case 'main':
            self.current_screen = MainMenu(self.screen, self.change_screen)
         case 'game':
-           self.current_screen = GameScreen(self.screen, self.change_screen, data)
+           self.current_screen = GameScreen(self.screen, self.change_screen, data, self.network)
         case 'level_select':
            self.current_screen = LevelSelect(self.screen, self.change_screen)
         

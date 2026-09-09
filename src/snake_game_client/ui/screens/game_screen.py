@@ -2,15 +2,9 @@ from .screen import Screen
 
 from ...game.maps import CLASSIC, MEDIUM, PRO
 from ...game.snake import Snake
-from ...networking.client import GameClient
 from ..renderer import draw_map, draw_snake
 
 import pygame
-import uuid
-
-# 127.0.0.1 statt localhost: "localhost" braucht auf Windows oft 2+ Sekunden
-# zum Verbinden (IPv6-Fallback-Verzögerung), 127.0.0.1 verbindet sofort.
-SERVER_URL = "ws://127.0.0.1:8000/ws/game"
 
 DIRECTION_KEYS = {
   pygame.K_UP: (0, -1),
@@ -28,9 +22,10 @@ DIRECTION_NAMES = {
 
 class GameScreen(Screen):
 
-  def __init__(self, screen, change_screen, data):
+  def __init__(self, screen, change_screen, data, network):
     self.change_screen = change_screen
     self.ui_elements = {}
+    self.network = network
     match data:
       case 'classic':
         self.map = CLASSIC
@@ -46,9 +41,6 @@ class GameScreen(Screen):
     self.snake = Snake.spawn_at(self.map.start_for(0))
     self.game_over = False
 
-    player_id = str(uuid.uuid4())
-    self.network = GameClient(f"{SERVER_URL}?player_id={player_id}")
-    self.network.start()
     self.network.send({"type": "create_game"})
 
 

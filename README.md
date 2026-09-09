@@ -30,6 +30,23 @@ Client for the M450 Project
 
 | TF-ID       | Klasse | Test                                   | Erwartetes Ergebnis                                |
 | ----------- | ------ | ----------------------------------------- | ------------------------------------------------------ |
-| TF-SNAKE-01 | Snake  | Spawn auf Solo-Spawnpunkt (oben links)   | Kopf der Snake liegt exakt auf `spawn_for(0)`           |
+| TF-SNAKE-01 | Snake  | Spawn auf Solo-Spawnpunkt (oben links)   | Kopf der Snake liegt exakt auf `start_for(0)`           |
 | TF-SNAKE-02 | Snake  | Spawn erzeugt zwei Segmente               | Snake besteht aus zwei benachbarten Feldern             |
 | TF-SNAKE-03 | Snake  | Beide Segmente an jedem Spawnpunkt        | Kopf UND Schwanz liegen nie auf einer Wand              |
+
+### Networking
+
+| TF-ID     | Klasse     | Test                                  | Erwartetes Ergebnis                              |
+| --------- | ---------- | ---------------------------------------- | --------------------------------------------------- |
+| TF-NET-01 | GameClient | Nachricht senden ohne aktive Verbindung  | Nachricht landet in der Sende-Warteschlange          |
+| TF-NET-02 | GameClient | Zustand direkt nach Erstellung           | Empfangs-Warteschlange ist leer                      |
+
+### GameScreen (Server-Anbindung)
+
+| TF-ID    | Klasse     | Test                                  | Erwartetes Ergebnis                                        |
+| -------- | ---------- | ---------------------------------------- | --------------------------------------------------------------- |
+| TF-GS-01 | GameScreen | Level wird gestartet                     | `create_game`-Nachricht wird an den Server geschickt             |
+| TF-GS-02 | GameScreen | Pfeiltaste gedrückt                      | Passende `set_direction`-Nachricht wird geschickt                |
+| TF-GS-03 | GameScreen | Server schickt neue Kopfposition         | Bewegungsrichtung wird korrekt aus der Positionsänderung abgeleitet |
+| TF-GS-04 | GameScreen | Server schickt unveränderte Position     | Bewegungsrichtung bleibt unverändert                             |
+| TF-GS-05 | GameScreen | Server schickt `game_over`               | `game_over`-Status wird gesetzt                                  |
