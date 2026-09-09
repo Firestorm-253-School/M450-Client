@@ -11,7 +11,7 @@ class JoinGame(Screen):
 
     self.key_input = Input(((screen.get_width() / 2) - 100, (screen.get_height() / 2) - 40, 200, 60), "Key")
 
-    self.join_button = Button(((screen.get_width() / 2) - 100, (screen.get_height() / 2) + 40, 200, 60), "Join Game", lambda: game.ui.change_screen('game', self.key_input.value))
+    self.join_button = Button(((screen.get_width() / 2) - 100, (screen.get_height() / 2) + 40, 200, 60), "Join Game", lambda: game.ui.change_screen('lobby_screen'))
 
     self.ui_elements = {self.title, self.key_input, self.join_button}
 
