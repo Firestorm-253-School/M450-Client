@@ -1,4 +1,4 @@
-from snake_game_client.ui.button import Button 
+from snake_game_client.ui.ui_elements.button import Button 
 import pygame
 from unittest.mock import Mock
 
