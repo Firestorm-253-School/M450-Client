@@ -4,15 +4,21 @@ from snake_game_client.game.maps import AVAILABLE_MAPS, CLASSIC
 
 
 @pytest.mark.parametrize("game_map", AVAILABLE_MAPS, ids=lambda m: m.name)
-def test_start_position_is_not_a_wall(game_map):
-    assert game_map.start_position not in game_map.walls
+def test_map_has_four_start_positions(game_map):
+    assert len(game_map.start_positions) == 4
 
 
 @pytest.mark.parametrize("game_map", AVAILABLE_MAPS, ids=lambda m: m.name)
-def test_start_position_is_within_bounds(game_map):
-    x, y = game_map.start_position
-    assert 0 <= x < game_map.width
-    assert 0 <= y < game_map.height
+def test_start_positions_are_not_walls(game_map):
+    for position in game_map.start_positions:
+        assert position not in game_map.walls
+
+
+@pytest.mark.parametrize("game_map", AVAILABLE_MAPS, ids=lambda m: m.name)
+def test_start_positions_are_within_bounds(game_map):
+    for x, y in game_map.start_positions:
+        assert 0 <= x < game_map.width
+        assert 0 <= y < game_map.height
 
 
 @pytest.mark.parametrize("game_map", AVAILABLE_MAPS, ids=lambda m: m.name)

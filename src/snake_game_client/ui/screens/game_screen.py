@@ -1,7 +1,8 @@
 from .screen import Screen
 
 from ...game.maps import CLASSIC, MEDIUM, PRO
-from ..renderer import draw_map
+from ...game.snake import Snake
+from ..renderer import draw_map, draw_snake
 
 import pygame
 
@@ -20,6 +21,10 @@ class GameScreen(Screen):
       case _:
         self.map = CLASSIC
 
+    # TODO Multiplayer: aktuell nur Spieler 0 (Solo). Für mehrere Spieler:
+    # eine Liste von Snakes anlegen, je eine pro Spieler-Index via self.map.start_for(i).
+    self.snake = Snake.spawn_at(self.map.start_for(0))
+
 
   def handle_event(self, event: pygame.event.Event):
     if(event.type == pygame.KEYDOWN):
@@ -32,3 +37,4 @@ class GameScreen(Screen):
     screen.fill((153, 217, 234))
 
     draw_map(screen, self.map)
+    draw_snake(screen, self.snake, self.map)
