@@ -6,7 +6,7 @@ from snake_game_client.game.maps import AVAILABLE_MAPS
 
 
 def _reachable_cells(game_map):
-    start = game_map.start_position
+    start = game_map.start_positions[0]
     visited = {start}
     queue = deque([start])
     while queue:

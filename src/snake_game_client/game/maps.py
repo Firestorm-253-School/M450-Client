@@ -6,7 +6,12 @@ class Map:
     width: int
     height: int
     walls: frozenset[tuple[int, int]]
-    start_position: tuple[int, int]
+    start_positions: tuple[tuple[int, int], ...]
+
+    # TODO Multiplayer: welcher Spieler welchen player_index (0-3) bekommt,
+    # muss der Server vorgeben, sobald es mehr als einen Spieler gibt.
+    def start_for(self, player_index: int) -> tuple[int, int]:
+        return self.start_positions[player_index % len(self.start_positions)]
 
 def _border_walls(width: int, height: int) -> frozenset[tuple[int, int]]:
     walls = set()
@@ -21,12 +26,20 @@ def _border_walls(width: int, height: int) -> frozenset[tuple[int, int]]:
 def _rect(x: int, y: int, width: int, height: int) -> frozenset[tuple[int, int]]:
     return frozenset((x + dx, y + dy) for dx in range(width) for dy in range(height))
 
+def _corner_spawns(width: int, height: int, inset: int = 2) -> tuple[tuple[int, int], ...]:
+    return (
+        (inset, inset),
+        (width - 1 - inset, inset),
+        (inset, height - 1 - inset),
+        (width - 1 - inset, height - 1 - inset),
+    )
+
 CLASSIC = Map(
     name="Classic",
     width=24,
     height=18,
     walls=_border_walls(24, 18),
-    start_position=(12, 9),
+    start_positions=_corner_spawns(24, 18),
 )
 
 MEDIUM = Map(
@@ -35,16 +48,16 @@ MEDIUM = Map(
     height=18,
     walls=(
         _border_walls(24, 18)
-        | _rect(5, 3, 4, 1)   
-        | _rect(5, 3, 1, 4)   
-        | _rect(15, 3, 4, 1)  
-        | _rect(18, 3, 1, 4)  
-        | _rect(5, 14, 4, 1)  
-        | _rect(5, 11, 1, 4)  
-        | _rect(15, 14, 4, 1) 
-        | _rect(18, 11, 1, 4) 
+        | _rect(5, 3, 4, 1)
+        | _rect(5, 3, 1, 4)
+        | _rect(15, 3, 4, 1)
+        | _rect(18, 3, 1, 4)
+        | _rect(5, 14, 4, 1)
+        | _rect(5, 11, 1, 4)
+        | _rect(15, 14, 4, 1)
+        | _rect(18, 11, 1, 4)
     ),
-    start_position=(12, 9),
+    start_positions=_corner_spawns(24, 18),
 )
 
 PRO = Map(
@@ -66,7 +79,7 @@ PRO = Map(
         | _rect(16, 6, 1, 3)
         | _rect(16, 9, 1, 3)
     ),
-    start_position=(12, 9)
+    start_positions=_corner_spawns(24, 18, inset=4),
 )
 
 AVAILABLE_MAPS: list[Map] = [

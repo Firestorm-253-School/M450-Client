@@ -24,11 +24,20 @@ Client for the M450 Project
 
 ### Maps
 
-| TF-ID     | Klasse | Test                                    | Erwartetes Ergebnis                              |
-| --------- | ------ | --------------------------------------- | ------------------------------------------------ |
-| TF-MAP-01 | Map    | Startposition liegt auf einer Wand      | Startposition ist nie eine Wand                  |
-| TF-MAP-02 | Map    | Startposition ausserhalb des Spielfelds | Startposition liegt immer innerhalb des Grids    |
-| TF-MAP-03 | Map    | Lücke im Aussenrand                     | Kompletter Rand ist eine Wand                    |
-| TF-MAP-04 | Map    | Bereich durch Hindernis eingeschlossen  | Alle freien Felder sind vom Start aus erreichbar |
-| TF-MAP-05 | Map    | Zwei Maps mit gleichem Namen            | Alle Map-Namen sind eindeutig                    |
-| TF-MAP-06 | Map    | Hindernis im Innenbereich von Classic   | Classic hat keine inneren Hindernisse            |
+| TF-ID     | Klasse | Test                                   | Erwartetes Ergebnis                                   |
+| --------- | ------ | -------------------------------------- | ----------------------------------------------------- |
+| TF-MAP-01 | Map    | Anzahl Spawnpunkte (max. 4 Spieler)    | Jede Map hat genau 4 Spawnpunkte                      |
+| TF-MAP-02 | Map    | Spawnpunkt liegt auf einer Wand        | Kein Spawnpunkt ist eine Wand                         |
+| TF-MAP-03 | Map    | Spawnpunkt ausserhalb des Spielfelds   | Alle Spawnpunkte liegen innerhalb des Grids           |
+| TF-MAP-04 | Map    | Lücke im Aussenrand                    | Kompletter Rand ist eine Wand                         |
+| TF-MAP-05 | Map    | Bereich durch Hindernis eingeschlossen | Alle freien Felder sind vom Spawnpunkt aus erreichbar |
+| TF-MAP-06 | Map    | Zwei Maps mit gleichem Namen           | Alle Map-Namen sind eindeutig                         |
+| TF-MAP-07 | Map    | Hindernis im Innenbereich von Classic  | Classic hat keine inneren Hindernisse                 |
+
+### Snake
+
+| TF-ID       | Klasse | Test                                   | Erwartetes Ergebnis                           |
+| ----------- | ------ | -------------------------------------- | --------------------------------------------- |
+| TF-SNAKE-01 | Snake  | Spawn auf Solo-Spawnpunkt (oben links) | Kopf der Snake liegt exakt auf `spawn_for(0)` |
+| TF-SNAKE-02 | Snake  | Spawn erzeugt zwei Segmente            | Snake besteht aus zwei benachbarten Feldern   |
+| TF-SNAKE-03 | Snake  | Beide Segmente an jedem Spawnpunkt     | Kopf UND Schwanz liegen nie auf einer Wand    |
