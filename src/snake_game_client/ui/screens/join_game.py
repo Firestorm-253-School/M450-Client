@@ -5,13 +5,13 @@ from ..ui_elements.label import Label
 
 class JoinGame(Screen):
 
-  def __init__(self, screen, change_screen):
+  def __init__(self, screen, game):
 
     self.title = Label(((screen.get_width() / 2), (screen.get_height() / 2) - 100), "Join Game", 72)
 
     self.key_input = Input(((screen.get_width() / 2) - 100, (screen.get_height() / 2) - 40, 200, 60), "Key")
 
-    self.join_button = Button(((screen.get_width() / 2) - 100, (screen.get_height() / 2) + 40, 200, 60), "Join Game", lambda: change_screen('game', self.key_input.value))
+    self.join_button = Button(((screen.get_width() / 2) - 100, (screen.get_height() / 2) + 40, 200, 60), "Join Game", lambda: game.ui.change_screen('game', self.key_input.value))
 
     self.ui_elements = {self.title, self.key_input, self.join_button}
 
