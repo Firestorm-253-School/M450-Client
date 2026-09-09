@@ -1,6 +1,7 @@
 from .screens.main_menu import MainMenu
 from .screens.game_screen import GameScreen
 from .screens.level_select import LevelSelect
+from .screens.join_game import JoinGame
 
 def test():
    print("Test")
@@ -19,6 +20,8 @@ class Ui:
            self.current_screen = GameScreen(self.screen, self.change_screen, data)
         case 'level_select':
            self.current_screen = LevelSelect(self.screen, self.change_screen)
+        case 'join_game':
+           self.current_screen = JoinGame(self.screen, self.change_screen)
         
   def handle_event(self, event):
      self.current_screen.handle_event(event)
