@@ -6,6 +6,13 @@ from ..renderer import draw_map, draw_snake
 
 import pygame
 
+DIRECTION_KEYS = {
+  pygame.K_UP: (0, -1),
+  pygame.K_DOWN: (0, 1),
+  pygame.K_LEFT: (-1, 0),
+  pygame.K_RIGHT: (1, 0),
+}
+
 class GameScreen(Screen):
 
   def __init__(self, screen, change_screen, data):
@@ -30,8 +37,20 @@ class GameScreen(Screen):
     if(event.type == pygame.KEYDOWN):
       if(event.key == pygame.K_ESCAPE):
         self.change_screen('main')
+      elif event.key in DIRECTION_KEYS:
+        self._send_direction(DIRECTION_KEYS[event.key])
 
     super().handle_event(event)
+
+  def _send_direction(self, direction: tuple[int, int]) -> None:
+    # TODO Netzwerk: hier später die Richtung an den Server schicken.
+    # Aktuell nur Platzhalter, tut noch nichts (Bewegung entscheidet der Server).
+    pass
+
+  def apply_server_state(self, body: list[tuple[int, int]]) -> None:
+    # TODO Netzwerk: wird von der Netzwerk-Schicht aufgerufen, sobald der
+    # Server eine neue Snake-Position schickt (Bewegung, Wachstum, etc.).
+    self.snake.body = body
 
   def draw(self, screen: pygame.Surface):
     screen.fill((153, 217, 234))
