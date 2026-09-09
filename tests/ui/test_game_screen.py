@@ -12,12 +12,12 @@ class FakeNetwork:
         self.sent.append(message)
 
 
-def test_game_screen_sends_create_game_on_init():
+def test_game_screen_sends_create_game_with_map_on_init():
     network = FakeNetwork()
 
-    GameScreen(None, lambda *a, **kw: None, 'classic', network)
+    GameScreen(None, lambda *a, **kw: None, 'medium', network)
 
-    assert {"type": "create_game"} in network.sent
+    assert {"type": "create_game", "map": "medium"} in network.sent
 
 
 def test_send_direction_sends_expected_message():

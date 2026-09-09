@@ -29,19 +29,23 @@ class GameScreen(Screen):
     match data:
       case 'classic':
         self.map = CLASSIC
+        self.map_name = 'classic'
       case 'medium':
         self.map = MEDIUM
+        self.map_name = 'medium'
       case 'pro':
         self.map = PRO
+        self.map_name = 'pro'
       case _:
         self.map = CLASSIC
+        self.map_name = 'classic'
 
     # TODO Multiplayer: aktuell nur Spieler 0 (Solo). Für mehrere Spieler:
     # eine Liste von Snakes anlegen, je eine pro Spieler-Index via self.map.start_for(i).
     self.snake = Snake.spawn_at(self.map.start_for(0))
     self.game_over = False
 
-    self.network.send({"type": "create_game"})
+    self.network.send({"type": "create_game", "map": self.map_name})
 
 
   def handle_event(self, event: pygame.event.Event):
