@@ -14,6 +14,7 @@ class HighscoreScreen(Screen):
     label = Label(((screen.get_width() / 2), (screen.get_height() / 2) - 200), "Highscores", 72)
     back_button = Button(((screen.get_width() / 2) - 100, (screen.get_height() / 2) + 260, 200, 60), "Zurueck", lambda: change_screen('main'))
 
+
     self.ui_elements = {label, back_button}
 
     with urllib.request.urlopen(SERVER_URL, timeout=3) as response:
