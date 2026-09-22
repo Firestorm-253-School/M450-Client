@@ -29,8 +29,8 @@ class Ui:
            self.current_screen = JoinGame(self.screen, self.game)
         case 'lobby_screen':
            self.current_screen = LobbyScreen(self.screen, self.game)
-         case 'highscore':
-             self.current_screen = HighscoreScreen(self.screen, self.change_screen)
+        case 'highscore':
+           self.current_screen = HighscoreScreen(self.screen, self.change_screen)
 
         
   def handle_event(self, event):
