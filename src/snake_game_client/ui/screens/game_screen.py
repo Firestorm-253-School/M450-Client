@@ -2,15 +2,9 @@ from .screen import Screen
 
 from ...game.maps import CLASSIC, MEDIUM, PRO
 from ...game.snake import Snake
-from ...networking.client import GameClient
 from ..renderer import draw_map, draw_snake
 
 import pygame
-import uuid
-
-# 127.0.0.1 statt localhost: "localhost" braucht auf Windows oft 2+ Sekunden
-# zum Verbinden (IPv6-Fallback-Verzögerung), 127.0.0.1 verbindet sofort.
-SERVER_URL = "ws://127.0.0.1:8000/ws/game"
 
 DIRECTION_KEYS = {
   pygame.K_UP: (0, -1),
@@ -28,28 +22,30 @@ DIRECTION_NAMES = {
 
 class GameScreen(Screen):
 
-  def __init__(self, screen, game, data):
+  def __init__(self, screen, game, data, network):
     self.game = game
     self.ui_elements = {}
+    self.network = network
     match data:
       case 'classic':
         self.map = CLASSIC
+        self.map_name = 'classic'
       case 'medium':
         self.map = MEDIUM
+        self.map_name = 'medium'
       case 'pro':
         self.map = PRO
+        self.map_name = 'pro'
       case _:
         self.map = CLASSIC
+        self.map_name = 'classic'
 
     # TODO Multiplayer: aktuell nur Spieler 0 (Solo). Für mehrere Spieler:
     # eine Liste von Snakes anlegen, je eine pro Spieler-Index via self.map.start_for(i).
     self.snake = Snake.spawn_at(self.map.start_for(0))
     self.game_over = False
 
-    player_id = str(uuid.uuid4())
-    self.network = GameClient(f"{SERVER_URL}?player_id={player_id}")
-    self.network.start()
-    self.network.send({"type": "create_game"})
+    self.network.send({"type": "create_game", "map": self.map_name})
 
 
   def handle_event(self, event: pygame.event.Event):

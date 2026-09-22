@@ -9,9 +9,10 @@ def test():
    print("Test")
 
 class Ui:
-  def __init__(self, screen, game):
+  def __init__(self, screen, network, game):
       self.game = game
       self.screen = screen
+      self.network = network
       self.current_screen = WelcomeScreen(self.screen, game)
 
   def change_screen(self, screen, data = None):
@@ -19,7 +20,7 @@ class Ui:
         case 'main':
            self.current_screen = MainMenu(self.screen, self.game)
         case 'game':
-           self.current_screen = GameScreen(self.screen, self.game, data)
+           self.current_screen = GameScreen(self.screen, self.game, data, self.network)
         case 'level_select':
            self.current_screen = LevelSelect(self.screen, self.game)
         case 'join_game':

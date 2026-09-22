@@ -9,8 +9,7 @@ BACKGROUND_DARK = "#94C538"
 WALL_COLOR = "#537A32"
 # TODO Multiplayer: bis zu 4 Snakes gleichzeitig, jede braucht eine eigene,
 # klar unterscheidbare Farbe statt dieser einen fest verdrahteten.
-SNAKE_HEAD_COLOR = "#4A8AF0"
-SNAKE_BODY_COLOR = "#3477DB"
+SNAKE_COLOR = "#3477DB"
 SNAKE_OUTLINE_COLOR = "#255A9E"
 
 
@@ -36,16 +35,35 @@ def draw_map(screen: pygame.Surface, game_map: Map) -> None:
         pygame.draw.rect(screen, WALL_COLOR, _cell_rect(x, y, offset_x, offset_y))
 
 
+def _connector_rect(rect1: pygame.Rect, rect2: pygame.Rect) -> pygame.Rect:
+    if rect1.centery == rect2.centery:
+        left = min(rect1.centerx, rect2.centerx)
+        right = max(rect1.centerx, rect2.centerx)
+        return pygame.Rect(left, rect1.top, right - left, rect1.height)
+
+    top = min(rect1.centery, rect2.centery)
+    bottom = max(rect1.centery, rect2.centery)
+    return pygame.Rect(rect1.left, top, rect1.width, bottom - top)
+
+
 def draw_snake(screen: pygame.Surface, snake: Snake, game_map: Map) -> None:
     offset_x, offset_y = _offsets(screen, game_map)
 
-    margin = 2
+    # Verbindungsstücke reichen nur von der Zellenmitte zur Zellenmitte,
+    # damit die echten Enden (Kopf/Schwanz) rund bleiben statt zugemalt zu werden.
+    for (x1, y1), (x2, y2) in zip(snake.body, snake.body[1:]):
+        connector = _connector_rect(
+            _cell_rect(x1, y1, offset_x, offset_y),
+            _cell_rect(x2, y2, offset_x, offset_y),
+        )
+        pygame.draw.rect(screen, SNAKE_COLOR, connector)
 
-    for index, (x, y) in enumerate(snake.body):
-        color = SNAKE_HEAD_COLOR if index == 0 else SNAKE_BODY_COLOR
-        rect = _cell_rect(x, y, offset_x, offset_y).inflate(-margin * 2, -margin * 2)
-        pygame.draw.rect(screen, color, rect, border_radius=12)
-        pygame.draw.rect(screen, SNAKE_OUTLINE_COLOR, rect, width=2, border_radius=12)
+    for x, y in snake.body:
+        rect = _cell_rect(x, y, offset_x, offset_y)
+        pygame.draw.rect(screen, SNAKE_COLOR, rect, border_radius=12)
+
+    head_rect = _cell_rect(*snake.head(), offset_x, offset_y)
+    pygame.draw.rect(screen, SNAKE_OUTLINE_COLOR, head_rect, width=2, border_radius=12)
 
     _draw_face(screen, snake, offset_x, offset_y)
 
