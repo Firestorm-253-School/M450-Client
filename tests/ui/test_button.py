@@ -8,7 +8,8 @@ def test_button_hover(monkeypatch):
         (100, 100, 200, 60),
         "Play",
         lambda: None,
-        color=(100, 100, 100)
+        color=(100, 100, 100),
+        color_hover=(80, 80, 80)
     )
 
     monkeypatch.setattr(
@@ -19,15 +20,14 @@ def test_button_hover(monkeypatch):
 
     button.update()
 
-    assert button.current_color == (80, 80, 80)
+    assert button.hover is True
 
 
 def test_button_no_hover(monkeypatch):
     button = Button(
         (100, 100, 200, 60),
         "Play",
-        lambda: None,
-        color=(100, 100, 100)
+        lambda: None
     )
 
     monkeypatch.setattr(
@@ -38,7 +38,7 @@ def test_button_no_hover(monkeypatch):
 
     button.update()
 
-    assert button.current_color == (100, 100, 100)
+    assert button.hover is False
 
 
 def test_button_click():

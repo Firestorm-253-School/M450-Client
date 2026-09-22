@@ -28,8 +28,8 @@ DIRECTION_NAMES = {
 
 class GameScreen(Screen):
 
-  def __init__(self, screen, change_screen, data):
-    self.change_screen = change_screen
+  def __init__(self, screen, game, data):
+    self.game = game
     self.ui_elements = {}
     match data:
       case 'classic':
@@ -55,7 +55,7 @@ class GameScreen(Screen):
   def handle_event(self, event: pygame.event.Event):
     if(event.type == pygame.KEYDOWN):
       if(event.key == pygame.K_ESCAPE):
-        self.change_screen('main')
+        self.game.ui.change_screen('main')
       elif event.key in DIRECTION_KEYS:
         self._send_direction(DIRECTION_KEYS[event.key])
 

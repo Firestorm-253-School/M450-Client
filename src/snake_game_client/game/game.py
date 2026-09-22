@@ -14,14 +14,18 @@ class Game:
     pygame.display.set_caption("Snake Game")
     self.clock = pygame.time.Clock()
 
-    self.ui = Ui(self.screen)
+    self.ui = Ui(self.screen, self)
+
+    self.running = False
+
+    self.player = None
 
   def run(self):
-    running = True
-    while running:
+    self.running = True
+    while self.running:
       for event in pygame.event.get():
           if event.type == pygame.QUIT:
-              running = False
+              self.quit()
 
           self.ui.handle_event(event)
 
@@ -31,3 +35,6 @@ class Game:
       self.clock.tick(60)
       
     pygame.quit()
+
+  def quit(self):
+     self.running = False
