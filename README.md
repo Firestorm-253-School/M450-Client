@@ -51,10 +51,12 @@ Client for the M450 Project
 
 ### GameScreen (Server-Anbindung)
 
-| TF-ID    | Klasse     | Test                                 | Erwartetes Ergebnis                                                 |
-| -------- | ---------- | ------------------------------------ | ------------------------------------------------------------------- |
-| TF-GS-01 | GameScreen | Level wird gestartet                 | `create_game`-Nachricht wird an den Server geschickt                |
-| TF-GS-02 | GameScreen | Pfeiltaste gedrückt                  | Passende `set_direction`-Nachricht wird geschickt                   |
-| TF-GS-03 | GameScreen | Server schickt neue Kopfposition     | Bewegungsrichtung wird korrekt aus der Positionsänderung abgeleitet |
-| TF-GS-04 | GameScreen | Server schickt unveränderte Position | Bewegungsrichtung bleibt unverändert                                |
-| TF-GS-05 | GameScreen | Server schickt `game_over`           | `game_over`-Status wird gesetzt                                     |
+| TF-ID    | Klasse     | Test                                         | Erwartetes Ergebnis                                                                                                         |
+| -------- | ---------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| TF-GS-01 | GameScreen | Level wird gestartet                         | `create_game`-Nachricht wird an den Server geschickt                                                                        |
+| TF-GS-02 | GameScreen | Pfeiltaste gedrückt                          | Passende `set_direction`-Nachricht wird geschickt                                                                           |
+| TF-GS-03 | GameScreen | Server schickt neue Kopfposition             | Bewegungsrichtung wird korrekt aus der Positionsänderung abgeleitet                                                         |
+| TF-GS-04 | GameScreen | Server schickt unveränderte Position         | Bewegungsrichtung bleibt unverändert                                                                                        |
+| TF-GS-05 | GameScreen | Server schickt `game_over`                   | `game_over`-Status wird gesetzt                                                                                             |
+| TF-GS-06 | GameScreen | Apfel wird im Game State nicht mehr gefunden | Der Biss-Sound wird genau einmal abgespielt gesetzt                                                                         |
+| TF-GS-07 | GameScreen | Äpfel aus einem Game State übernehmen        | Die Äpfel der Game-State-Nachricht werden im `GameScreen` übernommen und die Anzahl stimmt mit der Nachricht übereingesetzt |

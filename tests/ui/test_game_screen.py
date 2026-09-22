@@ -34,7 +34,7 @@ def test_apply_server_state_infers_direction_from_movement():
     game_screen = GameScreen(None, lambda *a, **kw: None, 'classic', network)
     game_screen.snake.body = [(5, 5), (4, 5)]
 
-    game_screen.apply_server_state([(5, 4), (5, 5)])
+    game_screen.apply_server_state([(5, 4), (5, 5)], [])
 
     assert game_screen.snake.direction == (0, -1)
     assert game_screen.snake.body == [(5, 4), (5, 5)]
@@ -46,7 +46,7 @@ def test_apply_server_state_keeps_direction_when_position_unchanged():
     game_screen.snake.direction = (1, 0)
     game_screen.snake.body = [(5, 5), (4, 5)]
 
-    game_screen.apply_server_state([(5, 5), (4, 5)])
+    game_screen.apply_server_state([(5, 5), (4, 5)], [])
 
     assert game_screen.snake.direction == (1, 0)
 
@@ -59,3 +59,40 @@ def test_update_sets_game_over_flag_on_game_over_message():
     game_screen.update()
 
     assert game_screen.game_over is True
+
+
+def test_bite_sound_plays_when_apple_is_eaten(mocker):
+    network = FakeNetwork()
+    game = mocker.Mock()
+
+    game_screen = GameScreen(None, game, "classic", network)
+
+    game_screen.apples = [(5, 5), (10, 10)]
+
+    play_mock = mocker.patch.object(game_screen.game.sound_bite, "play")
+
+    network.incoming.put({
+        "type": "game_state",
+        "snake": [[1, 1]],
+        "apples": [[5, 5]]
+    })
+
+    game_screen.update()
+
+    play_mock.assert_called_once()
+
+def test_apply_apples_from_game_state(mocker):
+    network = FakeNetwork()
+    game = mocker.Mock()
+
+    game_screen = GameScreen(None, game, "classic", network)
+    
+    network.incoming.put({
+        "type": "game_state",
+        "snake": [[1, 1]],
+        "apples": [[5, 5], [3, 3]]
+    })
+
+    game_screen.update()
+
+    assert len(game_screen.apples) == 2
