@@ -2,7 +2,7 @@
 name = "snake_game_client"
 version = "0.1.0"
 description = "Snake Game Client"
-requires-python = ">=3.11"
+requires-python = ">=3.12,<3.14"
 
 dependencies = [
     "pygame",
