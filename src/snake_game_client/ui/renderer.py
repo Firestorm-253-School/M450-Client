@@ -12,6 +12,11 @@ WALL_COLOR = "#537A32"
 SNAKE_COLOR = "#3477DB"
 SNAKE_OUTLINE_COLOR = "#255A9E"
 
+APPLE_COLOR = "#ff0000"
+APPLE_BORDER = "#930000"
+APPLE_STEM = "#846442"
+APPLE_LEAF = "#508b1f"
+
 
 def _offsets(screen: pygame.Surface, game_map: Map) -> tuple[float, float]:
     offset_x = (screen.get_width() - (game_map.width * CELL_SIZE)) / 2
@@ -92,3 +97,19 @@ def _draw_face(screen: pygame.Surface, snake: Snake, offset_x: float, offset_y: 
         shine_x = pupil_x - pupil_radius * 0.4
         shine_y = pupil_y - pupil_radius * 0.4
         pygame.draw.circle(screen, "white", (shine_x, shine_y), shine_radius)
+
+def draw_apples(screen: pygame.Surface, apples: list[tuple[int, int]], game_map: Map):
+    offset_x, offset_y = _offsets(screen, game_map)
+
+    for apple in apples:
+        (x, y) = apple
+
+        cell_rect = _cell_rect(x, y, offset_x, offset_y)
+        radius = CELL_SIZE/2 - 4
+
+        pygame.draw.circle(screen, APPLE_COLOR, cell_rect.center, radius)
+        pygame.draw.circle(screen, APPLE_BORDER, cell_rect.center, radius, width=3)
+
+        pygame.draw.rect(screen, APPLE_STEM, (cell_rect.centerx - 1, cell_rect.centery - radius - 5, 3, 15))
+
+        pygame.draw.ellipse(screen, APPLE_LEAF, (cell_rect.centerx, cell_rect.centery - radius - 5, 15, 5))

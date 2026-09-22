@@ -2,7 +2,7 @@ from .screen import Screen
 
 from ...game.maps import CLASSIC, MEDIUM, PRO
 from ...game.snake import Snake
-from ..renderer import draw_map, draw_snake
+from ..renderer import draw_map, draw_snake, draw_apples
 
 import pygame
 
@@ -45,6 +45,8 @@ class GameScreen(Screen):
     self.snake = Snake.spawn_at(self.map.start_for(0))
     self.game_over = False
 
+    self.apples = []
+
     self.network.send({"type": "create_game", "map": self.map_name})
 
 
@@ -60,7 +62,7 @@ class GameScreen(Screen):
   def _send_direction(self, direction: tuple[int, int]) -> None:
     self.network.send({"type": "set_direction", "direction": DIRECTION_NAMES[direction]})
 
-  def apply_server_state(self, body: list[tuple[int, int]]) -> None:
+  def apply_server_state(self, body: list[tuple[int, int]], apples) -> None:
     if body and self.snake.body:
       old_head = self.snake.body[0]
       new_head = body[0]
@@ -69,13 +71,18 @@ class GameScreen(Screen):
         self.snake.direction = moved
 
     self.snake.body = body
+    if(len(apples) < len(self.apples)):
+      self.game.sound_bite.play()
+    self.apples = apples
+
 
   def update(self):
     while not self.network.incoming.empty():
       message = self.network.incoming.get()
       if message.get("type") == "game_state":
         body = [tuple(position) for position in message["snake"]]
-        self.apply_server_state(body)
+        apples = [tuple(position) for position in message["apples"]]
+        self.apply_server_state(body, apples)
       elif message.get("type") == "game_over":
         self.game_over = True
 
@@ -86,6 +93,7 @@ class GameScreen(Screen):
 
     draw_map(screen, self.map)
     draw_snake(screen, self.snake, self.map)
+    draw_apples(screen, self.apples, self.map)
 
     if self.game_over:
       self._draw_game_over(screen)
