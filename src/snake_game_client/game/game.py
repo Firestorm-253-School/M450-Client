@@ -12,8 +12,10 @@ class Game:
     pygame.init()
 
     pygame.mixer.music.load("assets/music/background.mp3")
-    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(-1)
+
+    self.sound_bite = pygame.mixer.Sound("assets/sounds/bite.mp3")
 
     self.screen = pygame.display.set_mode((1280, 720))
     pygame.display.set_caption("Snake Game")
