@@ -26,14 +26,18 @@ class Game:
     self.network = GameClient(f"{SERVER_URL}?player_id={player_id}")
     self.network.start()
 
-    self.ui = Ui(self.screen, self.network)
+    self.ui = Ui(self.screen, self.network, self)
+
+    self.running = False
+
+    self.player = None
 
   def run(self):
-    running = True
-    while running:
+    self.running = True
+    while self.running:
       for event in pygame.event.get():
           if event.type == pygame.QUIT:
-              running = False
+              self.quit()
 
           self.ui.handle_event(event)
 
@@ -43,3 +47,6 @@ class Game:
       self.clock.tick(60)
       
     pygame.quit()
+
+  def quit(self):
+     self.running = False

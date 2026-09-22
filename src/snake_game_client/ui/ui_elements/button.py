@@ -2,18 +2,25 @@ from .ui_element import UIElement
 import pygame
 
 class Button(UIElement):
-  def __init__(self, rect, text, on_click, color=(255,255,255)):
+  def __init__(self, rect, text, on_click, color=(255,255,255), color_hover=(200,200,200), color_disabled=(150, 150, 150)):
     super().__init__(rect)
 
     self.text = text
     self.on_click = on_click
+
     self.color = color
-    self.current_color = color
+    self.color_hover = color_hover
+    self.color_disabled = color_disabled
+
+    self.disabled = False
+    self.hover = False
 
   def draw(self, screen: pygame.Surface):
+    color = self.color_disabled if self.disabled else (self.color_hover if self.hover else self.color) 
+
     pygame.draw.rect(
       screen,
-      self.current_color,
+      color,
       self.rect,
       border_radius=8
       )
@@ -27,16 +34,11 @@ class Button(UIElement):
     )
 
   def handle_event(self, event):
-    if(event.type == pygame.MOUSEBUTTONDOWN):
+    if(event.type == pygame.MOUSEBUTTONDOWN and not self.disabled):
       if(event.button == 1 and self.rect.collidepoint(event.pos)):
         self.on_click()
 
 
   def update(self):
     mouse_pos = pygame.mouse.get_pos()
-
-    if(self.rect.collidepoint(mouse_pos)):
-      self.current_color = tuple(int(c * 0.8) for c in self.color)
-
-    else:
-      self.current_color = self.color
+    self.hover = self.rect.collidepoint(mouse_pos)
