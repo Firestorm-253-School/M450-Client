@@ -4,6 +4,11 @@ from ...game.maps import CLASSIC, MEDIUM, PRO
 from ...game.snake import Snake
 from ..renderer import draw_map, draw_snake, draw_apples
 
+from ..ui_elements.label import Label, Align
+from ..ui_elements.button import Button
+from ...game.player import PlayerData
+
+import pyperclip
 import pygame
 
 DIRECTION_KEYS = {
@@ -24,9 +29,9 @@ class GameScreen(Screen):
 
   def __init__(self, screen, game, data, network):
     self.game = game
-    self.ui_elements = {}
     self.network = network
-    match data:
+
+    match data["map"]:
       case 'classic':
         self.map = CLASSIC
         self.map_name = 'classic'
@@ -40,20 +45,27 @@ class GameScreen(Screen):
         self.map = CLASSIC
         self.map_name = 'classic'
 
-    # TODO Multiplayer: aktuell nur Spieler 0 (Solo). Für mehrere Spieler:
-    # eine Liste von Snakes anlegen, je eine pro Spieler-Index via self.map.start_for(i).
-    self.snake = Snake.spawn_at(self.map.start_for(0))
+    self.game_id = data["game_id"]
+
+    self.game_id_label = Label((90, 30), self.game_id, 36, Align.START, (0,0,0))
+    self.game_id_copy_button = Button((10, 10, 65, 40), "Copy", lambda: pyperclip.copy(self.game_id), (255,255,255),(230,230,230))
+
+    self.ui_elements = {self.game_id_label, self.game_id_copy_button}
+
+    self.snakes = {}
+    
     self.game_over = False
 
     self.apples = []
-
-    self.network.send({"type": "create_game", "map": self.map_name})
 
 
   def handle_event(self, event: pygame.event.Event):
     if(event.type == pygame.KEYDOWN):
       if(event.key == pygame.K_ESCAPE):
-        self.game.ui.change_screen('main')
+        self.game.network.send({"type": "leave_game"})
+        response = self.game.network.get_response("game_left")
+        if(response != None):
+          self.game.ui.change_screen('main')
       elif event.key in DIRECTION_KEYS:
         self._send_direction(DIRECTION_KEYS[event.key])
 
@@ -62,15 +74,20 @@ class GameScreen(Screen):
   def _send_direction(self, direction: tuple[int, int]) -> None:
     self.network.send({"type": "set_direction", "direction": DIRECTION_NAMES[direction]})
 
-  def apply_server_state(self, body: list[tuple[int, int]], apples) -> None:
-    if body and self.snake.body:
-      old_head = self.snake.body[0]
-      new_head = body[0]
-      moved = (new_head[0] - old_head[0], new_head[1] - old_head[1])
-      if moved != (0, 0):
-        self.snake.direction = moved
+  def apply_server_state(self, players: dict[str, PlayerData], apples) -> None:
 
-    self.snake.body = body
+    for player_id, player in players.items():
+      if player_id in self.snakes:
+        self.snakes[player_id].direction = player.direction
+        self.snakes[player_id].body = player.body
+      else:
+        self.snakes[player_id] = Snake(player.body, player.direction)
+
+      if(player_id == self.game.player.username):
+        if(player.alive == False):
+          self.game_over = True
+
+
     if(len(apples) < len(self.apples)):
       self.game.sound_bite.play()
     self.apples = apples
@@ -80,9 +97,16 @@ class GameScreen(Screen):
     while not self.network.incoming.empty():
       message = self.network.incoming.get()
       if message.get("type") == "game_state":
-        body = [tuple(position) for position in message["snake"]]
         apples = [tuple(position) for position in message["apples"]]
-        self.apply_server_state(body, apples)
+        players = {
+          player_id: PlayerData(
+              body=[tuple(position) for position in data["snake"]],
+              alive=data["alive"],
+              direction=tuple(data["direction"])
+          )
+          for player_id, data in message["snakes"].items()
+        }
+        self.apply_server_state(players, apples)
       elif message.get("type") == "game_over":
         self.game_over = True
 
@@ -92,8 +116,11 @@ class GameScreen(Screen):
     screen.fill((153, 217, 234))
 
     draw_map(screen, self.map)
-    draw_snake(screen, self.snake, self.map)
+    for snake in self.snakes.values():
+      draw_snake(screen, snake, self.map)
     draw_apples(screen, self.apples, self.map)
+
+    super().draw(screen)
 
     if self.game_over:
       self._draw_game_over(screen)
