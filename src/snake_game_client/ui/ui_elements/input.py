@@ -1,5 +1,6 @@
 from .ui_element import UIElement
 import pygame
+import pyperclip
 
 class Input(UIElement):
   def __init__(self, rect, placeholder):
@@ -40,10 +41,12 @@ class Input(UIElement):
       self.active = self.rect.collidepoint(event.pos)
 
     if event.type == pygame.KEYDOWN and self.active:
-        if event.key == pygame.K_BACKSPACE:
+        if event.key == pygame.K_v and event.mod & pygame.KMOD_CTRL:
+           self.value += pyperclip.paste()
+        elif event.key == pygame.K_BACKSPACE:
             self.value = self.value[:-1]
         elif event.key == pygame.K_RETURN:
             return self.value
-        else:
+        elif event.unicode.isprintable():
             self.value += event.unicode
     return None

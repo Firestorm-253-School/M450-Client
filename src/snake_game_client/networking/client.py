@@ -20,6 +20,16 @@ class GameClient:
     def send(self, message: dict) -> None:
         self._outgoing.put(message)
 
+    def get_response(self, *types: str, timeout: float = 5) -> dict | None:
+        while True:
+            try:
+                message = self.incoming.get(timeout=timeout)
+            except queue.Empty:
+                return None
+
+            if message.get("type") in types:
+                return message
+
     def _run(self) -> None:
         asyncio.set_event_loop(self._loop)
         self._loop.run_until_complete(self._connect())
