@@ -1,7 +1,6 @@
 from ..ui.ui import Ui
 from ..networking.client import GameClient
 import pygame
-import uuid
 
 # 127.0.0.1 statt localhost: "localhost" braucht auf Windows oft 2+ Sekunden
 # zum Verbinden (IPv6-Fallback-Verzögerung), 127.0.0.1 verbindet sofort.
@@ -21,18 +20,13 @@ class Game:
     pygame.display.set_caption("Snake Game")
     self.clock = pygame.time.Clock()
 
-    # Eine Verbindung + Spieler-ID für die ganze Session, damit sie beim
-    # mehrfachen Level-Start nicht immer neu aufgebaut wird (kein Leck,
-    # konsistente Spieler-ID über mehrere Runden hinweg).
-    player_id = str(uuid.uuid4())
-    self.network = GameClient(f"{SERVER_URL}?player_id={player_id}")
-    self.network.start()
+    self.network = None
+    self.player = None
 
-    self.ui = Ui(self.screen, self.network, self)
+    self.ui = Ui(self.screen, self)
 
     self.running = False
 
-    self.player = None
 
   def run(self):
     self.running = True
@@ -52,3 +46,8 @@ class Game:
 
   def quit(self):
      self.running = False
+
+  def init_network(self, player):
+    self.player = player
+    self.network = GameClient(f"{SERVER_URL}?player_id={self.player.username}")
+    self.network.start()

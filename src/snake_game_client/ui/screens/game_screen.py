@@ -6,7 +6,7 @@ from ..renderer import draw_map, draw_snake, draw_apples
 
 from ..ui_elements.label import Label, Align
 from ..ui_elements.button import Button
-from ...game.player import GamePlayer
+from ...game.player import PlayerData
 
 import pyperclip
 import pygame
@@ -52,8 +52,6 @@ class GameScreen(Screen):
 
     self.ui_elements = {self.game_id_label, self.game_id_copy_button}
 
-    
-    # self.snake = Snake.spawn_at(self.map.start_for(0))
     self.snakes = {}
     
     self.game_over = False
@@ -76,24 +74,18 @@ class GameScreen(Screen):
   def _send_direction(self, direction: tuple[int, int]) -> None:
     self.network.send({"type": "set_direction", "direction": DIRECTION_NAMES[direction]})
 
-  def apply_server_state(self, snakes: dict[str, list[tuple[int, int]]], apples) -> None:
+  def apply_server_state(self, players: dict[str, PlayerData], apples) -> None:
 
-    for player_id, snake in snakes.items():
+    for player_id, player in players.items():
       if player_id in self.snakes:
-        old_head = self.snakes[player_id].body[0]
-        new_head = snake[0]
-
-        moved = (
-            new_head[0] - old_head[0],
-            new_head[1] - old_head[1]
-        )
-
-        if moved != (0, 0):
-            self.snakes[player_id].direction = moved
-
-        self.snakes[player_id].body = snake
+        self.snakes[player_id].direction = player.direction
+        self.snakes[player_id].body = player.body
       else:
-        self.snakes[player_id] = Snake(snake)
+        self.snakes[player_id] = Snake(player.body, player.direction)
+
+      if(player_id == self.game.player.username):
+        if(player.alive == False):
+          self.game_over = True
 
 
     if(len(apples) < len(self.apples)):
@@ -106,11 +98,15 @@ class GameScreen(Screen):
       message = self.network.incoming.get()
       if message.get("type") == "game_state":
         apples = [tuple(position) for position in message["apples"]]
-        snakes = {
-          player_id: [tuple(position) for position in body]
-          for player_id, body in message["snakes"].items()
+        players = {
+          player_id: PlayerData(
+              body=[tuple(position) for position in data["snake"]],
+              alive=data["alive"],
+              direction=tuple(data["direction"])
+          )
+          for player_id, data in message["snakes"].items()
         }
-        self.apply_server_state(snakes, apples)
+        self.apply_server_state(players, apples)
       elif message.get("type") == "game_over":
         self.game_over = True
 

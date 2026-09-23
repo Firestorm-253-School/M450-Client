@@ -30,7 +30,7 @@ class WelcomeScreen(Screen):
 
   def set_username(self, username):
     player = Player(username)
-    self.game.player = player
+    self.game.init_network(player)
 
     self.game.ui.change_screen('main')
 
