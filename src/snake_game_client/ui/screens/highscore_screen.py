@@ -5,7 +5,7 @@ from ..ui_elements.label import Label
 import json
 import urllib.request
 
-SERVER_URL = "http://127.0.0.1:8000/api/highscores"
+API_URL = "https://m450-server.onrender.com/api/highscores"
 
 MODI = ["classic", "medium", "pro"]
 AKTIV = (255, 240, 0)
@@ -49,7 +49,7 @@ class HighscoreScreen(Screen):
     self.ui_elements = elemente
 
   def lade_uebersicht(self, modus):
-    url = SERVER_URL if modus is None else f"{SERVER_URL}?modus={modus}"
+    url = API_URL if modus is None else f"{API_URL}?modus={modus}"
     try:
       with urllib.request.urlopen(url, timeout=3) as response:
         return json.load(response)
