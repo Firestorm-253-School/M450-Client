@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class Snake:
     body: list[tuple[int, int]]
     direction: tuple[int, int] = (1, 0)
+    color: str = "#ff0000"
 
     @classmethod
     def spawn_at(cls, position: tuple[int, int]) -> "Snake":

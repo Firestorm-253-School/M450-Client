@@ -7,10 +7,6 @@ CELL_SIZE = 40
 BACKGROUND_LIGHT = "#AAD751"
 BACKGROUND_DARK = "#94C538"
 WALL_COLOR = "#537A32"
-# TODO Multiplayer: bis zu 4 Snakes gleichzeitig, jede braucht eine eigene,
-# klar unterscheidbare Farbe statt dieser einen fest verdrahteten.
-SNAKE_COLOR = "#3477DB"
-SNAKE_OUTLINE_COLOR = "#255A9E"
 
 APPLE_COLOR = "#ff0000"
 APPLE_BORDER = "#930000"
@@ -61,14 +57,16 @@ def draw_snake(screen: pygame.Surface, snake: Snake, game_map: Map) -> None:
             _cell_rect(x1, y1, offset_x, offset_y),
             _cell_rect(x2, y2, offset_x, offset_y),
         )
-        pygame.draw.rect(screen, SNAKE_COLOR, connector)
+        pygame.draw.rect(screen, snake.color, connector)
 
     for x, y in snake.body:
         rect = _cell_rect(x, y, offset_x, offset_y)
-        pygame.draw.rect(screen, SNAKE_COLOR, rect, border_radius=12)
+        pygame.draw.rect(screen, snake.color, rect, border_radius=12)
+
+    outline_color = darken_color(snake.color)
 
     head_rect = _cell_rect(*snake.head(), offset_x, offset_y)
-    pygame.draw.rect(screen, SNAKE_OUTLINE_COLOR, head_rect, width=2, border_radius=12)
+    pygame.draw.rect(screen, outline_color, head_rect, width=2, border_radius=12)
 
     _draw_face(screen, snake, offset_x, offset_y)
 
@@ -113,3 +111,16 @@ def draw_apples(screen: pygame.Surface, apples: list[tuple[int, int]], game_map:
         pygame.draw.rect(screen, APPLE_STEM, (cell_rect.centerx - 1, cell_rect.centery - radius - 5, 3, 15))
 
         pygame.draw.ellipse(screen, APPLE_LEAF, (cell_rect.centerx, cell_rect.centery - radius - 5, 15, 5))
+
+def darken_color(hex_color: str, factor: float = 0.8) -> str:
+    hex_color = hex_color.lstrip("#")
+
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+
+    r = int(r * factor)
+    g = int(g * factor)
+    b = int(b * factor)
+
+    return f"#{r:02X}{g:02X}{b:02X}"

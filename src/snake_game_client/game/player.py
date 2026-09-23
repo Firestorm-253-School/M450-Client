@@ -17,3 +17,4 @@ class PlayerData:
     body: list[tuple[int, int]]
     alive: bool
     direction: tuple[int, int]
+    color: str
