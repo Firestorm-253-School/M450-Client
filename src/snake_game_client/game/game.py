@@ -9,6 +9,7 @@ import uuid
 SERVER_URL = "wss://m450-server.onrender.com/ws/game"
 
 
+
 class Game:
   def __init__(self):
     pygame.init()
