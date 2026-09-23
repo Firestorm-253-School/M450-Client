@@ -5,7 +5,9 @@ import uuid
 
 # 127.0.0.1 statt localhost: "localhost" braucht auf Windows oft 2+ Sekunden
 # zum Verbinden (IPv6-Fallback-Verzögerung), 127.0.0.1 verbindet sofort.
-SERVER_URL = "ws://127.0.0.1:8000/ws/game"
+
+SERVER_URL = "wss://m450-server.onrender.com/ws/game"
+
 
 class Game:
   def __init__(self):
