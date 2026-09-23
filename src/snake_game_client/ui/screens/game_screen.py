@@ -80,8 +80,9 @@ class GameScreen(Screen):
       if player_id in self.snakes:
         self.snakes[player_id].direction = player.direction
         self.snakes[player_id].body = player.body
+        self.snakes[player_id].color = player.color
       else:
-        self.snakes[player_id] = Snake(player.body, player.direction)
+        self.snakes[player_id] = Snake(player.body, player.direction, player.color)
 
       if(player_id == self.game.player.username):
         if(player.alive == False):
@@ -102,7 +103,8 @@ class GameScreen(Screen):
           player_id: PlayerData(
               body=[tuple(position) for position in data["snake"]],
               alive=data["alive"],
-              direction=tuple(data["direction"])
+              direction=tuple(data["direction"]),
+              color=str(data["color"])
           )
           for player_id, data in message["snakes"].items()
         }
@@ -122,6 +124,8 @@ class GameScreen(Screen):
 
     super().draw(screen)
 
+    self._draw_legend(screen)
+
     if self.game_over:
       self._draw_game_over(screen)
 
@@ -133,3 +137,41 @@ class GameScreen(Screen):
     font = pygame.font.Font(None, 96)
     text = font.render("Game Over", True, "white")
     screen.blit(text, text.get_rect(center=screen.get_rect().center))
+
+  def _draw_legend(self, screen: pygame.Surface) -> None:
+    padding = 10
+    item_height = 30
+    circle_radius = 7
+
+    font = pygame.font.Font(None, 28)
+
+    width = max(
+        [font.size(player_id)[0] for player_id in self.snakes] + [0]
+    ) + 50
+
+    height = len(self.snakes) * item_height + padding * 2
+
+    x = screen.get_width() - width - padding
+    y = padding
+
+    background = pygame.Surface((width, height), pygame.SRCALPHA)
+    background.fill((255, 255, 255, 220))
+    screen.blit(background, (x, y))
+
+    for index, (player_id, snake) in enumerate(self.snakes.items()):
+        item_y = y + padding + index * item_height
+
+        # Farbpunkte
+        pygame.draw.circle(
+            screen,
+            snake.color,
+            (x + padding + circle_radius, item_y + item_height // 2),
+            circle_radius
+        )
+
+        # Spielername
+        text = font.render(player_id, True, (0, 0, 0))
+        screen.blit(
+            text,
+            (x + padding + circle_radius * 2 + 8, item_y + 4)
+        )
