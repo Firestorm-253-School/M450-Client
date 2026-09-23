@@ -4,6 +4,8 @@ from .screens.level_select import LevelSelect
 from .screens.join_game import JoinGame
 from .screens.welcome_screen import WelcomeScreen
 from .screens.lobby_screen import LobbyScreen
+from .screens.highscore_screen import HighscoreScreen
+
 
 def test():
    print("Test")
@@ -26,6 +28,9 @@ class Ui:
            self.current_screen = JoinGame(self.screen, self.game)
         case 'lobby_screen':
            self.current_screen = LobbyScreen(self.screen, self.game)
+        case 'highscore':
+           self.current_screen = HighscoreScreen(self.screen, self.change_screen)
+
         
   def handle_event(self, event):
      self.current_screen.handle_event(event)
